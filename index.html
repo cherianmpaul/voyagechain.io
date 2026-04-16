@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoyageChain — Own the Token. Sail the World.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy:        #050F1E;
+    --navy-mid:    #0A1F3A;
+    --navy-light:  #112848;
+    --gold:        #C9A84C;
+    --gold-bright: #E8C96A;
+    --gold-dim:    #8A6E2F;
+    --gold-glow:   rgba(201,168,76,0.15);
+    --cream:       #F5EDD8;
+    --white:       #FFFFFF;
+    --gray:        #8899AA;
+    --gray-light:  #AAB8C8;
+    --ocean1:      #0D2B4E;
+    --ocean2:      #0A1F38;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+    padding: 24px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(5,15,30,0.95) 0%, transparent 100%);
+    transition: background 0.4s;
+  }
+  nav.scrolled { background: rgba(5,15,30,0.97); border-bottom: 1px solid rgba(201,168,76,0.15); }
+
+  .nav-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 18px; font-weight: 700;
+    letter-spacing: 0.15em; color: var(--gold);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--cream); font-weight: 400; }
+
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a {
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--gray-light); text-decoration: none;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  .nav-cta {
+    font-family: 'Cinzel', serif; font-size: 12px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--navy); background: var(--gold);
+    border: none; padding: 12px 28px; cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+  }
+  .nav-cta:hover { background: var(--gold-bright); transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    overflow: hidden; padding: 120px 60px 80px;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 80%, rgba(13,43,78,0.8) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 20% 20%, rgba(201,168,76,0.06) 0%, transparent 60%),
+      linear-gradient(180deg, #050F1E 0%, #071828 40%, #0D2B4E 70%, #050F1E 100%);
+  }
+
+  /* Animated ocean waves */
+  .waves {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 200px;
+    overflow: hidden;
+  }
+  .wave {
+    position: absolute; bottom: 0; left: -50%; width: 200%;
+    height: 100%; opacity: 0.08;
+  }
+  .wave svg { width: 100%; height: 100%; }
+  .wave1 { animation: waveMove 12s linear infinite; }
+  .wave2 { animation: waveMove 18s linear infinite reverse; opacity: 0.05; }
+  .wave3 { animation: waveMove 8s linear infinite; opacity: 0.03; }
+
+  @keyframes waveMove {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(50%); }
+  }
+
+  /* Gold particle dots */
+  .particles {
+    position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  }
+  .particle {
+    position: absolute; width: 2px; height: 2px;
+    background: var(--gold); border-radius: 50%;
+    animation: float linear infinite;
+    opacity: 0;
+  }
+  @keyframes float {
+    0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.3; }
+    100% { transform: translateY(-20px) translateX(30px); opacity: 0; }
+  }
+
+  .hero-content {
+    position: relative; z-index: 10;
+    text-align: center; max-width: 900px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 11px; letter-spacing: 0.35em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 32px;
+    opacity: 0; animation: fadeUp 1s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 300; line-height: 1.0;
+    color: var(--cream);
+    margin-bottom: 12px;
+    opacity: 0; animation: fadeUp 1s 0.4s forwards;
+  }
+  .hero-title em {
+    font-style: italic; color: var(--gold);
+    display: block;
+  }
+
+  .hero-divider {
+    width: 80px; height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    margin: 36px auto;
+    opacity: 0; animation: fadeUp 1s 0.6s forwards;
+  }
+
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 300; font-style: italic;
+    color: var(--gray-light); line-height: 1.6;
+    max-width: 680px; margin: 0 auto 48px;
+    opacity: 0; animation: fadeUp 1s 0.8s forwards;
+  }
+
+  .hero-buttons {
+    display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+    opacity: 0; animation: fadeUp 1s 1s forwards;
+  }
+
+  .btn-primary {
+    font-family: 'Cinzel', serif; font-size: 13px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--navy); background: var(--gold);
+    border: none; padding: 18px 48px; cursor: pointer;
+    transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .btn-primary::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--gold-bright); transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-secondary {
+    font-family: 'Cinzel', serif; font-size: 13px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--gold); background: transparent;
+    border: 1px solid var(--gold-dim); padding: 18px 48px; cursor: pointer;
+    transition: all 0.3s;
+  }
+  .btn-secondary:hover { border-color: var(--gold); background: var(--gold-glow); }
+
+  .hero-stats {
+    position: absolute; bottom: 60px; left: 0; right: 0;
+    display: flex; justify-content: center; gap: 80px;
+    z-index: 10;
+    opacity: 0; animation: fadeUp 1s 1.2s forwards;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px; font-weight: 600; color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 11px; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--gray);
+    margin-top: 6px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION BASE ── */
+  section { padding: 120px 60px; position: relative; }
+
+  .section-eyebrow {
+    font-family: 'Cinzel', serif; font-size: 10px;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(38px, 5vw, 62px);
+    font-weight: 300; line-height: 1.1;
+    color: var(--cream); margin-bottom: 24px;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-body {
+    font-size: 16px; line-height: 1.9;
+    color: var(--gray-light); max-width: 640px;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how {
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-mid) 50%, var(--navy) 100%);
+  }
+  .how-inner { max-width: 1200px; margin: 0 auto; }
+  .how-header { text-align: center; margin-bottom: 80px; }
+  .how-header .section-body { margin: 0 auto; text-align: center; }
+
+  .how-steps {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 2px; position: relative;
+  }
+
+  .how-step {
+    background: var(--navy-light);
+    padding: 52px 40px;
+    position: relative; overflow: hidden;
+    transition: transform 0.4s;
+  }
+  .how-step::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    transform: scaleX(0); transition: transform 0.4s;
+  }
+  .how-step:hover { transform: translateY(-4px); }
+  .how-step:hover::before { transform: scaleX(1); }
+
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 72px; font-weight: 300;
+    color: rgba(201,168,76,0.12);
+    line-height: 1; margin-bottom: 20px;
+    transition: color 0.4s;
+  }
+  .how-step:hover .step-num { color: rgba(201,168,76,0.25); }
+
+  .step-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px; font-weight: 600;
+    color: var(--cream); margin-bottom: 16px;
+  }
+  .step-body {
+    font-size: 15px; line-height: 1.8;
+    color: var(--gray-light);
+  }
+  .step-tag {
+    display: inline-block; margin-top: 24px;
+    font-family: 'Cinzel', serif; font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid var(--gold-dim);
+    padding: 6px 14px;
+  }
+
+  /* ── PRIORITY SECTION ── */
+  .priority {
+    background: var(--navy-mid);
+    overflow: hidden;
+  }
+  .priority-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center;
+  }
+
+  .priority-table {
+    border: 1px solid rgba(201,168,76,0.2);
+    overflow: hidden;
+  }
+  .pt-header {
+    background: linear-gradient(135deg, var(--navy-light), var(--navy-mid));
+    padding: 20px 28px;
+    display: grid; grid-template-columns: 1.4fr 1fr 1.6fr;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+  }
+  .pt-header span {
+    font-family: 'Cinzel', serif; font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);
+  }
+  .pt-row {
+    display: grid; grid-template-columns: 1.4fr 1fr 1.6fr;
+    padding: 20px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.3s;
+    align-items: center;
+  }
+  .pt-row:last-child { border-bottom: none; }
+  .pt-row:hover { background: rgba(201,168,76,0.05); }
+  .pt-row.highlight { background: rgba(201,168,76,0.08); }
+
+  .pt-cell {
+    font-size: 14px; color: var(--gray-light); line-height: 1.4;
+  }
+  .pt-cell.bold { font-weight: 500; color: var(--cream); }
+  .pt-cell.gold { color: var(--gold); font-family: 'Cormorant Garamond', serif; font-size: 16px; }
+
+  .priority-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--gold);
+  }
+  .badge-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gold); flex-shrink: 0;
+  }
+
+  /* ── WAITLIST ── */
+  .waitlist {
+    background: linear-gradient(180deg, var(--navy) 0%, #071624 100%);
+    position: relative; overflow: hidden;
+  }
+  .waitlist::before {
+    content: '';
+    position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(201,168,76,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .waitlist-inner {
+    max-width: 760px; margin: 0 auto; text-align: center; position: relative; z-index: 1;
+  }
+
+  .waitlist-form {
+    margin-top: 56px;
+    background: rgba(17,40,72,0.6);
+    border: 1px solid rgba(201,168,76,0.2);
+    padding: 52px 60px;
+    backdrop-filter: blur(10px);
+  }
+
+  .form-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 20px; margin-bottom: 20px;
+  }
+
+  .form-group {
+    display: flex; flex-direction: column; gap: 8px; text-align: left;
+  }
+  .form-group.full { grid-column: 1 / -1; }
+
+  .form-label {
+    font-family: 'Cinzel', serif; font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);
+  }
+
+  .form-input, .form-select {
+    background: rgba(5,15,30,0.8);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--cream); padding: 14px 18px;
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.3s;
+    -webkit-appearance: none;
+    width: 100%;
+  }
+  .form-input:focus, .form-select:focus { border-color: var(--gold); }
+  .form-input::placeholder { color: var(--gray); }
+  .form-select option { background: var(--navy-mid); }
+
+  .form-checkbox-row {
+    display: flex; align-items: flex-start; gap: 14px;
+    margin-bottom: 32px; text-align: left;
+  }
+  .form-checkbox {
+    width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;
+    accent-color: var(--gold); cursor: pointer;
+  }
+  .form-checkbox-label {
+    font-size: 13px; color: var(--gray); line-height: 1.6;
+  }
+  .form-checkbox-label a { color: var(--gold); text-decoration: none; }
+
+  .form-submit {
+    width: 100%;
+    font-family: 'Cinzel', serif; font-size: 13px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--navy); background: var(--gold);
+    border: none; padding: 20px;
+    cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .form-submit::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--gold-bright); transform: translateX(-100%);
+    transition: transform 0.4s;
+  }
+  .form-submit:hover::after { transform: translateX(0); }
+  .form-submit span { position: relative; z-index: 1; }
+
+  .form-note {
+    margin-top: 20px; font-size: 12px;
+    color: var(--gray); line-height: 1.6;
+    text-align: center;
+  }
+
+  /* Success state */
+  .success-msg {
+    display: none; text-align: center; padding: 40px;
+  }
+  .success-icon {
+    font-size: 48px; margin-bottom: 20px;
+  }
+  .success-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px; color: var(--gold); margin-bottom: 12px;
+  }
+  .success-body {
+    font-size: 15px; color: var(--gray-light); line-height: 1.8;
+  }
+
+  /* ── TOKEN DETAILS ── */
+  .token {
+    background: var(--navy-mid);
+  }
+  .token-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start;
+  }
+
+  .token-card {
+    background: linear-gradient(135deg, var(--navy-light) 0%, var(--navy-mid) 100%);
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 48px; position: relative; overflow: hidden;
+  }
+  .token-card::after {
+    content: 'VCT';
+    position: absolute; bottom: -20px; right: -10px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 120px; font-weight: 600;
+    color: rgba(201,168,76,0.05); line-height: 1;
+    pointer-events: none;
+  }
+
+  .token-detail {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .token-detail:last-child { border-bottom: none; }
+  .token-detail-label {
+    font-size: 12px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--gray);
+  }
+  .token-detail-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; color: var(--cream); font-weight: 600;
+  }
+  .token-detail-value.accent { color: var(--gold); }
+
+  /* ── WHY WAITLIST ── */
+  .why {
+    background: var(--navy);
+  }
+  .why-inner { max-width: 1200px; margin: 0 auto; }
+  .why-header { text-align: center; margin-bottom: 72px; }
+
+  .why-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+  }
+  .why-card {
+    background: var(--navy-light);
+    padding: 44px 32px; text-align: center;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s;
+  }
+  .why-card:hover { transform: translateY(-6px); }
+
+  .why-icon {
+    font-size: 36px; margin-bottom: 20px;
+    display: block;
+  }
+  .why-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 600;
+    color: var(--cream); margin-bottom: 14px;
+  }
+  .why-card-body {
+    font-size: 14px; line-height: 1.8; color: var(--gray-light);
+  }
+  .why-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+    transform: scaleX(0); transition: transform 0.4s;
+  }
+  .why-card:hover::after { transform: scaleX(1); }
+
+  /* ── FLEET VISION ── */
+  .fleet {
+    background: linear-gradient(135deg, var(--navy-mid) 0%, var(--ocean1) 50%, var(--navy-mid) 100%);
+    position: relative; overflow: hidden;
+  }
+  .fleet::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 80px,
+      rgba(201,168,76,0.015) 80px,
+      rgba(201,168,76,0.015) 81px
+    );
+    pointer-events: none;
+  }
+  .fleet-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+  .fleet-header { text-align: center; margin-bottom: 72px; }
+
+  .fleet-phases {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+    counter-reset: phase;
+  }
+  .fleet-phase {
+    background: rgba(10,31,58,0.8);
+    border-top: 2px solid rgba(201,168,76,0.3);
+    padding: 40px 28px;
+    position: relative;
+  }
+  .fleet-phase::before {
+    counter-increment: phase;
+    content: "0" counter(phase);
+    position: absolute; top: 16px; right: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px; font-weight: 300;
+    color: rgba(201,168,76,0.1); line-height: 1;
+  }
+  .phase-year {
+    font-family: 'Cinzel', serif; font-size: 10px;
+    letter-spacing: 0.25em; color: var(--gold);
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .phase-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px; font-weight: 600; color: var(--cream);
+    margin-bottom: 14px;
+  }
+  .phase-body {
+    font-size: 13px; line-height: 1.8; color: var(--gray-light);
+  }
+  .phase-ships {
+    margin-top: 20px; padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px; color: var(--gold); font-weight: 600;
+  }
+  .phase-ships span {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; color: var(--gray);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    display: block; margin-top: 2px;
+  }
+
+  /* ── FAQ ── */
+  .faq {
+    background: var(--navy);
+  }
+  .faq-inner { max-width: 800px; margin: 0 auto; }
+  .faq-header { text-align: center; margin-bottom: 64px; }
+
+  .faq-item {
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    overflow: hidden;
+  }
+  .faq-question {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 28px 0; cursor: pointer;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px; font-weight: 400; color: var(--cream);
+    transition: color 0.3s;
+    user-select: none;
+  }
+  .faq-question:hover { color: var(--gold); }
+  .faq-icon {
+    width: 28px; height: 28px; flex-shrink: 0;
+    border: 1px solid rgba(201,168,76,0.3); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: var(--gold); transition: all 0.3s;
+  }
+  .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--gold-glow); }
+  .faq-answer {
+    max-height: 0; overflow: hidden; transition: max-height 0.5s ease;
+    font-size: 15px; line-height: 1.9; color: var(--gray-light);
+  }
+  .faq-item.open .faq-answer { max-height: 300px; }
+  .faq-answer-inner { padding: 0 0 28px; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #020A14;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    padding: 60px 60px 40px;
+  }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 60px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .footer-brand { max-width: 320px; }
+  .footer-logo {
+    font-family: 'Cinzel', serif; font-size: 20px;
+    font-weight: 700; color: var(--gold); margin-bottom: 16px; display: block;
+  }
+  .footer-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px; font-style: italic;
+    color: var(--gray); line-height: 1.6;
+  }
+  .footer-links h4 {
+    font-family: 'Cinzel', serif; font-size: 10px;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 20px;
+  }
+  .footer-links ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a {
+    font-size: 14px; color: var(--gray); text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--cream); }
+  .footer-bottom {
+    max-width: 1200px; margin: 28px auto 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--gray);
+  }
+  .footer-disclaimer {
+    font-size: 11px; color: rgba(136,153,170,0.6);
+    max-width: 600px; line-height: 1.6;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    .hero { padding: 100px 24px 60px; }
+    .hero-stats { gap: 32px; flex-wrap: wrap; bottom: 32px; }
+    .how-steps, .why-grid, .fleet-phases { grid-template-columns: 1fr; }
+    .priority-inner, .token-inner { grid-template-columns: 1fr; gap: 48px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .waitlist-form { padding: 32px 24px; }
+    .footer-inner { flex-direction: column; gap: 40px; }
+    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">VOYAGE<span>CHAIN</span></a>
+  <ul class="nav-links">
+    <li><a href="#how-it-works">How It Works</a></li>
+    <li><a href="#priority">Priority Access</a></li>
+    <li><a href="#token">The Token</a></li>
+    <li><a href="#fleet">Fleet Vision</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">
+    Join Waitlist
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="particles" id="particles"></div>
+  <div class="waves">
+    <div class="wave wave1">
+      <svg viewBox="0 0 1440 200" preserveAspectRatio="none" fill="none">
+        <path d="M0,100 C360,160 720,40 1080,100 C1260,130 1380,90 1440,100 L1440,200 L0,200 Z" fill="#0D2B4E"/>
+      </svg>
+    </div>
+    <div class="wave wave2">
+      <svg viewBox="0 0 1440 200" preserveAspectRatio="none" fill="none">
+        <path d="M0,80 C480,140 960,20 1440,80 L1440,200 L0,200 Z" fill="#1A4A8A"/>
+      </svg>
+    </div>
+    <div class="wave wave3">
+      <svg viewBox="0 0 1440 200" preserveAspectRatio="none" fill="none">
+        <path d="M0,120 C240,60 720,180 1080,120 C1260,90 1380,140 1440,120 L1440,200 L0,200 Z" fill="#0A1F38"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">The World's First Cruise Access Utility Token</p>
+    <h1 class="hero-title">
+      Own the Token.
+      <em>Sail the World.</em>
+    </h1>
+    <div class="hero-divider"></div>
+    <p class="hero-sub">
+      One token. Every ocean. Unlimited voyages — free, forever.
+      VoyageChain is rewriting the rules of luxury travel through blockchain ownership.
+    </p>
+    <div class="hero-buttons">
+      <button class="btn-primary" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">
+        <span>Join the Waitlist</span>
+      </button>
+      <button class="btn-secondary" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">
+        How It Works
+      </button>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">1B</div>
+      <div class="stat-label">Total Tokens — Fixed Forever</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">$1,000</div>
+      <div class="stat-label">Per Token — Base ICO Price</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Cruise Access — Unlimited</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">6</div>
+      <div class="stat-label">Continents — Global Fleet</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how-it-works">
+  <div class="how-inner">
+    <div class="how-header reveal">
+      <p class="section-eyebrow">The Model</p>
+      <h2 class="section-title">Radically simple.<br><em>Infinitely rewarding.</em></h2>
+      <p class="section-body">No subscriptions. No annual fees. No booking costs. Buy once, cruise forever. Here is how the VoyageChain model works from purchase to embarkation.</p>
+    </div>
+
+    <div class="how-steps">
+      <div class="how-step reveal">
+        <div class="step-num">01</div>
+        <h3 class="step-title">Purchase Your VCT Token</h3>
+        <p class="step-body">During the public token offering, purchase VoyageChain Tokens (VCT) at $1,000 per token. Your tokens are stored in your personal crypto wallet — fully owned, fully controlled by you. No platform lock-in. No custodian risk.</p>
+        <span class="step-tag">One-time purchase</span>
+      </div>
+      <div class="how-step reveal" style="transition-delay:0.1s">
+        <div class="step-num">02</div>
+        <h3 class="step-title">Book Your Voyage On-Chain</h3>
+        <p class="step-body">Browse upcoming voyages through the VoyageChain app. Your wallet balance is read automatically by our smart contract, which assigns your priority booking window. The more VCT you hold, the earlier you can book — and the wider your cabin selection.</p>
+        <span class="step-tag">Smart contract booking</span>
+      </div>
+      <div class="how-step reveal" style="transition-delay:0.2s">
+        <div class="step-num">03</div>
+        <h3 class="step-title">Board with Your Digital Pass</h3>
+        <p class="step-body">At embarkation, connect your wallet at the VoyageChain terminal. Our smart contract verifies your token ownership in seconds and issues you a voyage-specific NFT boarding pass. No tickets. No queues. No paper. Just the open ocean.</p>
+        <span class="step-tag">NFT boarding pass</span>
+      </div>
+      <div class="how-step reveal" style="transition-delay:0.0s">
+        <div class="step-num">04</div>
+        <h3 class="step-title">Sail. Free. Forever.</h3>
+        <p class="step-body">Every voyage on every VoyageChain ship is free for token holders. Sail the Mediterranean, the Caribbean, the Pacific, the Nordic fjords — as many times as you wish. Your token never expires. Your access never ends.</p>
+        <span class="step-tag">Unlimited access</span>
+      </div>
+      <div class="how-step reveal" style="transition-delay:0.1s">
+        <div class="step-num">05</div>
+        <h3 class="step-title">Hold More, Sail Better</h3>
+        <p class="step-body">The Stakeholder Priority System rewards commitment. The more VCT tokens you hold, the earlier you get to book cabins — giving you access to the finest suites and most sought-after departures before they fill up. It pays to hold.</p>
+        <span class="step-tag">Priority system</span>
+      </div>
+      <div class="how-step reveal" style="transition-delay:0.2s">
+        <div class="step-num">06</div>
+        <h3 class="step-title">Your Token. Your Asset.</h3>
+        <p class="step-body">VCT is a scarce, freely tradeable digital asset. With only one billion ever minted and the vast majority held in company treasury, tokens released to the public are structurally limited. You may sell, transfer, or gift your tokens at any time.</p>
+        <span class="step-tag">Freely transferable</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIORITY ACCESS -->
+<section class="priority" id="priority">
+  <div class="priority-inner">
+    <div class="reveal">
+      <p class="section-eyebrow">Stakeholder Priority System</p>
+      <h2 class="section-title">The more you hold,<br><em>the better you sail.</em></h2>
+      <p class="section-body">Cabin allocation on every VoyageChain ship is governed by a fully transparent, on-chain priority system. There are no fixed tiers, no membership grades, and no upsells. Your token balance is your boarding pass to better experiences.</p>
+      <br><br>
+      <p class="section-body" style="font-size:14px;">Every token holder cruises for free — always. Priority only determines how early you can choose your cabin. Larger holders get first access to the finest suites and premium routes, up to 180 days in advance.</p>
+    </div>
+
+    <div class="reveal" style="transition-delay:0.2s">
+      <div class="priority-table">
+        <div class="pt-header">
+          <span>VCT Holdings</span>
+          <span>Booking Opens</span>
+          <span>Cabin Access</span>
+        </div>
+        <div class="pt-row highlight">
+          <div class="pt-cell bold">
+            <div class="priority-badge">
+              <div class="badge-dot" style="background:#FFD700"></div>
+              500+ VCT
+            </div>
+          </div>
+          <div class="pt-cell gold">180 days</div>
+          <div class="pt-cell">All cabins including Owner's Suites</div>
+        </div>
+        <div class="pt-row">
+          <div class="pt-cell bold">
+            <div class="priority-badge">
+              <div class="badge-dot" style="background:#E5E4E2"></div>
+              100 – 499 VCT
+            </div>
+          </div>
+          <div class="pt-cell gold">120 days</div>
+          <div class="pt-cell">Suites, Balconies & Premium Cabins</div>
+        </div>
+        <div class="pt-row">
+          <div class="pt-cell bold">
+            <div class="priority-badge">
+              <div class="badge-dot" style="background:#FFD700;opacity:0.7"></div>
+              10 – 99 VCT
+            </div>
+          </div>
+          <div class="pt-cell gold">90 days</div>
+          <div class="pt-cell">Balconies, Ocean View & Standard</div>
+        </div>
+        <div class="pt-row">
+          <div class="pt-cell bold">
+            <div class="priority-badge">
+              <div class="badge-dot" style="background:#AAB8C8"></div>
+              1 – 9 VCT
+            </div>
+          </div>
+          <div class="pt-cell gold">60 days</div>
+          <div class="pt-cell">Ocean View & Standard Cabins</div>
+        </div>
+        <div class="pt-row">
+          <div class="pt-cell bold">
+            <div class="priority-badge">
+              <div class="badge-dot" style="background:#555"></div>
+              < 1 VCT
+            </div>
+          </div>
+          <div class="pt-cell gold">30 days</div>
+          <div class="pt-cell">Available inventory at booking</div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:var(--gray);margin-top:16px;line-height:1.6;">
+        All bookings are processed on-chain via smart contract. Wallet balance is read at time of booking. All token holders sail free — priority determines cabin selection order only.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- WHY JOIN WAITLIST -->
+<section class="why" id="why">
+  <div class="why-inner">
+    <div class="why-header reveal">
+      <p class="section-eyebrow">Why Join Now</p>
+      <h2 class="section-title">Be ahead of<br><em>the wave.</em></h2>
+      <p class="section-body" style="margin:0 auto;text-align:center;">The waitlist is your first step to priority access when VCT goes live. Here is what being early means for you.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal">
+        <span class="why-icon">⚓</span>
+        <h3 class="why-card-title">Early Access Priority</h3>
+        <p class="why-card-body">Waitlist members are first notified when VCT tokens become available. Be among the first to secure tokens before the public launch drives demand.</p>
+      </div>
+      <div class="why-card reveal" style="transition-delay:0.1s">
+        <span class="why-icon">🧭</span>
+        <h3 class="why-card-title">ICO Base Price</h3>
+        <p class="why-card-body">All tokens in the public sale launch at $1,000 each. Future rounds are expected to price higher as the fleet grows and token scarcity intensifies.</p>
+      </div>
+      <div class="why-card reveal" style="transition-delay:0.2s">
+        <span class="why-icon">🌊</span>
+        <h3 class="why-card-title">Maximum Priority Access</h3>
+        <p class="why-card-body">The earlier you acquire VCT, the more time your tokens have to accumulate. Higher holdings mean better cabin selection, better routes, and earlier booking windows.</p>
+      </div>
+      <div class="why-card reveal" style="transition-delay:0.3s">
+        <span class="why-icon">🔒</span>
+        <h3 class="why-card-title">Fixed Supply — Forever</h3>
+        <p class="why-card-body">Only one billion VCT will ever exist. The smart contract permanently prevents additional minting. Scarcity is not a promise — it is code.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOKEN DETAILS -->
+<section class="token" id="token">
+  <div class="token-inner">
+    <div class="reveal">
+      <p class="section-eyebrow">The VCT Token</p>
+      <h2 class="section-title">One token.<br><em>Every ocean.</em></h2>
+      <p class="section-body">The VoyageChain Token is an ERC-20 fixed-supply utility token deployed on Ethereum with Layer 2 integration for fast, low-cost transactions. It is the only instrument you need to access any VoyageChain vessel, on any route, anywhere in the world.</p>
+      <br>
+      <p class="section-body">VCT is not an investment product. It is a prepaid cruise service contract — your token is your ticket, your ticket has no expiry, and your voyages have no price. The value of the token is the freedom it represents.</p>
+    </div>
+
+    <div class="reveal" style="transition-delay:0.2s">
+      <div class="token-card">
+        <p style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.25em;color:var(--gold);text-transform:uppercase;margin-bottom:32px;">Token Specifications</p>
+        <div class="token-detail">
+          <span class="token-detail-label">Token Name</span>
+          <span class="token-detail-value">VoyageChain Token</span>
+        </div>
+        <div class="token-detail">
+          <span class="token-detail-label">Ticker Symbol</span>
+          <span class="token-detail-value accent">VCT</span>
+        </div>
+        <div class="token-detail">
+          <span class="token-detail-label">Standard</span>
+          <span class="token-detail-value">ERC-20 + Layer 2</span>
+        </div>
+        <div class="token-detail">
+          <span class="token-detail-label">Total Supply</span>
+          <span class="token-detail-value accent">1,000,000,000</span>
+        </div>
+        <div class="token-detail">
+          <span class="token-detail-label">Additional Minting</span>
+          <span class="token-detail-value">Never — Hard Cap</span>
+        </div>
+        <div class="token-detail">
+          <span class="token-detail-label">ICO Base Price</span>
+          <span class="token-detail-value accent">$1,000 per VCT</span>
+        </div>
+        <div class="token-detail">
+          <span class="token-detail-label">Utility</span>
+          <span class="token-detail-value">Unlimited Free Cruise</span>
+        </div>
+        <div class="token-detail">
+          <span class="token-detail-label">Access</span>
+          <span class="token-detail-value">Lifetime — No Expiry</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLEET VISION -->
+<section class="fleet" id="fleet">
+  <div class="fleet-inner">
+    <div class="fleet-header reveal">
+      <p class="section-eyebrow">Fleet Vision</p>
+      <h2 class="section-title">From partnerships<br><em>to a global fleet.</em></h2>
+      <p class="section-body" style="margin:0 auto;text-align:center;max-width:580px;">VoyageChain builds its fleet in four deliberate phases. Each phase is funded entirely by token sales — no debt, no external investors after Round 1, and no compromises on the quality of your experience.</p>
+    </div>
+    <div class="fleet-phases">
+      <div class="fleet-phase reveal">
+        <div class="phase-year">2026 — Phase 1</div>
+        <h3 class="phase-title">Launch via Partnerships</h3>
+        <p class="phase-body">VoyageChain-branded voyages begin through charter and white-label arrangements with established cruise operators. You sail on world-class ships under the VoyageChain flag within 12–18 months of the ICO.</p>
+        <div class="phase-ships">2–4 <span>Partner Ships</span></div>
+      </div>
+      <div class="fleet-phase reveal" style="transition-delay:0.1s">
+        <div class="phase-year">2027–2029 — Phase 2</div>
+        <h3 class="phase-title">First Owned Vessels</h3>
+        <p class="phase-body">VoyageChain acquires and commissions its first owned luxury cruise vessels, held through Special Purpose Vehicles. Mediterranean, Caribbean, and Pacific routes go live. The fleet is ours.</p>
+        <div class="phase-ships">5–9 <span>Owned Ships</span></div>
+      </div>
+      <div class="fleet-phase reveal" style="transition-delay:0.2s">
+        <div class="phase-year">2029–2032 — Phase 3</div>
+        <h3 class="phase-title">Purpose-Built Fleet</h3>
+        <p class="phase-body">VoyageChain commissions purpose-built vessels with full smart contract integration, VoyageChain interiors, and on-board technology designed exclusively for token holders. Every detail is ours.</p>
+        <div class="phase-ships">10–20 <span>Branded Ships</span></div>
+      </div>
+      <div class="fleet-phase reveal" style="transition-delay:0.3s">
+        <div class="phase-year">2032+ — Phase 4</div>
+        <h3 class="phase-title">Global Scale</h3>
+        <p class="phase-body">A global fleet of 20+ ships covering every major ocean route on six continents. From the Norwegian fjords to the South Pacific, every VoyageChain ship is yours to board — free, forever.</p>
+        <div class="phase-ships">20+ <span>Global Fleet</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST FORM -->
+<section class="waitlist" id="waitlist">
+  <div class="waitlist-inner">
+    <div class="reveal">
+      <p class="section-eyebrow">Join the Waitlist</p>
+      <h2 class="section-title">Your voyage<br><em>begins here.</em></h2>
+      <p class="section-body" style="margin:0 auto;text-align:center;">
+        Secure your place on the VCT waitlist today. When the public token sale goes live, waitlist members are notified first — giving you the earliest opportunity to purchase at the ICO base price of $1,000 per token.
+      </p>
+    </div>
+
+    <div class="waitlist-form reveal" style="transition-delay:0.2s" id="waitlistForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-input" id="firstName" placeholder="Your first name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-input" id="lastName" placeholder="Your last name">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="email" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Country of Residence</label>
+          <input type="text" class="form-input" id="country" placeholder="e.g. United States">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tokens of Interest</label>
+          <select class="form-select" id="tokens">
+            <option value="" disabled selected>How many VCT?</option>
+			<option value="<1"> < 1 VCT (Less than $1K)</option>
+            <option value="1-9">1 – 9 VCT ($1K – $9K)</option>
+            <option value="10-99">10 – 99 VCT ($10K – $99K)</option>
+            <option value="100-500">100 – 499 VCT ($100K – $499K)</option>
+            <option value="500+">500+ VCT ($500K+)</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label">How did you hear about VoyageChain?</label>
+          <select class="form-select" id="source">
+            <option value="" disabled selected>Select an option</option>
+            <option>Social Media</option>
+            <option>Referral from a friend</option>
+            <option>News / Press coverage</option>
+            <option>Crypto community / Forum</option>
+            <option>Investment network</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-checkbox-row">
+        <input type="checkbox" class="form-checkbox" id="agree">
+        <label class="form-checkbox-label" for="agree">
+          I understand that VCT is a utility token representing a prepaid cruise service contract, not a financial investment or security. I agree to VoyageChain's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+        </label>
+      </div>
+
+      <button class="form-submit" onclick="handleSubmit()">
+        <span>Reserve My Place on the Waitlist →</span>
+      </button>
+
+      <p class="form-note">
+        Your information is kept strictly confidential and will never be shared with third parties.<br>
+        Joining the waitlist does not constitute a purchase or binding commitment.
+      </p>
+    </div>
+
+    <div class="success-msg reveal" id="successMsg">
+      <div class="success-icon">⚓</div>
+      <h3 class="success-title">You're on board.</h3>
+      <p class="success-body">
+        Welcome to the VoyageChain waitlist. You will be among the first to know when VCT tokens go live for public purchase.<br><br>
+        In the meantime, keep an eye on your inbox — we will be sharing exclusive updates on fleet progress, launch timelines, and priority booking details.<br><br>
+        <em style="color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:20px;">The ocean is waiting.</em>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="faq-inner">
+    <div class="faq-header reveal">
+      <p class="section-eyebrow">Questions</p>
+      <h2 class="section-title">Everything you<br><em>need to know.</em></h2>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        What exactly does a VCT token give me?
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">
+          A VCT token is your lifetime cruise pass. It entitles you to board any VoyageChain ship, on any available voyage, completely free of charge — forever. There are no annual renewals, no booking fees, and no expiry dates. The token is a prepaid service contract, not a financial instrument.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        How does the Priority System work exactly?
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">
+          Every VCT holder can cruise for free — the priority system only determines when your booking window opens for a given voyage. Holders of 500+ VCT can book 180 days in advance and choose from all cabins. Holders of less then 1 VCT can book 30 days in advance from remaining inventory. All bookings are processed by smart contract — it reads your wallet balance at booking time, opens the appropriate window, and issues your NFT boarding pass instantly.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        Is VCT a cryptocurrency investment or security?
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">
+          No. VCT is a utility token — a prepaid cruise service contract. When you buy a VCT token, you are purchasing access to a cruise service, not making a financial investment. VoyageChain makes no promises of financial return, yield, dividends, or token price appreciation. The token gives you one thing: the right to sail. This structure is comparable to purchasing a lifetime gym membership or airline miles, and has been designed in consultation with legal counsel to comply with applicable regulations across major jurisdictions.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        Can I sell or transfer my VCT tokens?
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">
+          Yes. VCT tokens are standard ERC-20 tokens held in your own wallet. You may sell, transfer, or gift them at any time on the secondary market. There is no platform lock-in and no custodian holding your tokens. Your tokens — your rules.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        Why will there only ever be one billion VCT tokens?
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">
+          The one-billion hard cap is permanently enforced at the smart contract level — it cannot be changed by any person, including VoyageChain's founders. This creates genuine, irreversible scarcity. As the fleet grows and demand for cruise access increases, the fixed supply means tokens in circulation become increasingly valuable as access passes. VoyageChain holds the vast majority of tokens in its treasury, releasing them slowly to fund fleet expansion over decades.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        When will the public token sale launch?
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">
+          The public token sale date has not yet been announced. VoyageChain is currently in the Founding Investor round (Round 1), which is an invitation-only round for institutional investors. The public sale will follow. Joining the waitlist is the best way to receive early notification and secure your position ahead of the general public.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question" onclick="toggleFaq(this)">
+        Where will VoyageChain ships sail?
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <div class="faq-answer-inner">
+          VoyageChain's vision is to operate a global fleet covering all major ocean routes on six continents — Mediterranean, Caribbean, North Atlantic, Pacific, Indian Ocean, Arctic, and Antarctic. Phase 1 launches with partner-operated voyages on established routes. As the owned fleet grows through Phases 2–4, route diversity expands significantly. Token holders will have access to every VoyageChain voyage, on every ship, on every route — free, always.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-logo">VOYAGECHAIN</span>
+      <p class="footer-tagline">"The world is not a destination.<br>It is a way of living."</p>
+    </div>
+    <div class="footer-links">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#priority">Priority Access</a></li>
+        <li><a href="#token">The Token</a></li>
+        <li><a href="#fleet">Fleet Vision</a></li>
+        <li><a href="#waitlist">Join Waitlist</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Token Disclaimer</a></li>
+        <li><a href="#">Cookie Policy</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Contact</h4>
+      <ul>
+        <li><span id="eeb-474394-725132"></span><script type="text/javascript">(function(){var ml="%a.cgivneyhDt3El2Cf0ro'FmA4",mi="0=A10@C:D8B0=;FH15?<E0=I:8??E0JC6E91483:15725EF0=>:8??E0JC6E91483:15725E0=A0@G10=>",o="";for(var j=0,l=mi.length;j<l;j++){o+=ml.charAt(mi.charCodeAt(j)-48);}document.getElementById("eeb-474394-725132").innerHTML = decodeURIComponent(o);}());</script><noscript>*Protected Content*</noscript></li>
+        <li> <span id="eeb-959740-837216"></span><script type="text/javascript">(function(){var ml="4nyE'lCg.3Fs0eA2%mvhoiaDrftc",mi="@96F@?<CH=I@9G4AFE5JD@9>E1B=;J@0<BD2F7=KCFE18ED4@93E1B=;J@0<BD2F7=KCFE18ED@96@?:F@93",o="";for(var j=0,l=mi.length;j<l;j++){o+=ml.charAt(mi.charCodeAt(j)-48);}document.getElementById("eeb-959740-837216").innerHTML = decodeURIComponent(o);}());</script><noscript>*Protected Content*</noscript></li>
+        <li><a href="#">www.voyagechain.io</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 VoyageChain Inc. All rights reserved.</p>
+    <p class="footer-disclaimer">
+      VCT is a utility token representing a prepaid cruise service contract. It is not a financial instrument, security, or investment product. VoyageChain makes no representations regarding token price appreciation. Past performance of digital assets is not indicative of future results. This website does not constitute an offer to sell or solicitation to buy any security.
+    </p>
+  </div>
+</footer>
+
+<script>
+  // ── PARTICLES ──
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left: ${Math.random() * 100}%;
+      width: ${Math.random() * 2 + 1}px;
+      height: ${Math.random() * 2 + 1}px;
+      animation-duration: ${Math.random() * 15 + 10}s;
+      animation-delay: ${Math.random() * 10}s;
+    `;
+    container.appendChild(p);
+  }
+
+  // ── NAV SCROLL ──
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // ── SCROLL REVEAL ──
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // ── FAQ TOGGLE ──
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // ── FORM SUBMIT ──
+  function handleSubmit() {
+  
+    alert('The waiting list is not open yet. Please come back later.'); 
+    return;
+    
+    const first  = document.getElementById('firstName').value.trim();
+    const last   = document.getElementById('lastName').value.trim();
+    const email  = document.getElementById('email').value.trim();
+    const agree  = document.getElementById('agree').checked;
+    const tokens = document.getElementById('tokens').value;
+
+    if (!first || !last) { alert('Please enter your full name.'); return; }
+    if (!email || !email.includes('@')) { alert('Please enter a valid email address.'); return; }
+    if (!tokens) { alert('Please select how many tokens you are interested in.'); return; }
+    if (!agree) { alert('Please agree to the Terms of Service to continue.'); return; }
+
+    document.getElementById('waitlistForm').style.display = 'none';
+    const msg = document.getElementById('successMsg');
+    msg.style.display = 'block';
+    msg.classList.add('visible');
+  }
+</script>
+</body>
+</html>
